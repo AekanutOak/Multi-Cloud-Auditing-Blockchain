@@ -41,7 +41,7 @@ def upload_file():
         return "File uploaded successfully"
     
 if __name__ == '__main__':
-    print("Starting on domain name "+config["domain"])
+    print("Starting on ip "+config["host"])
     print()
     
     app.run(

@@ -1,0 +1,101 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #36517C;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#head-panel{
+    display: flex;
+    flex: 15vh;
+}
+
+#company-logo{
+    display:flex;
+    align-items: center;
+    margin-left: 64px;
+}
+
+#logo-img{
+    width: 64px;
+    height: 64px;
+}
+
+#logo-text{
+    font-weight: bold;
+    font-size: 36px;
+    color:white;
+}
+
+#body-panel{
+    flex:85vh;
+    display:flex;
+    justify-content: center;
+}
+
+#body-main{
+    display: flex;
+    flex-direction: column;
+    margin-left:64px;
+    margin-right: 10px;
+    justify-content: center;
+}
+
+#body-main #header-text{
+    font-weight: bold;
+    color:white;
+    font-size: 48px;
+    margin-bottom: 40px;
+    width: 40vw;
+}
+
+#body-main #desc-text{
+    color:white;
+    font-size: 28px;
+    margin-bottom: 40px;
+    width: 40vw;
+}
+
+#connect-metamask{
+    display:flex;
+    align-items: center;
+    border: 1px solid #46B2E2;
+    border-radius: 64px;
+    background-color: #46B2E2;
+    width: fit-content;
+    padding: 4px 16px;
+
+}
+
+#connect-metamask:hover{
+    background-color: #358eb4;
+}
+
+#connect-metamask img{
+    width: 32px;
+    height: 32px;
+    margin-right:16px;
+}
+
+#connect-metamask span{
+    font-weight: bold;
+    color:white;
+    font-size: 18px;
+}
+
+
+#body-secondary{
+    display: flex;
+    flex-direction: center;
+    align-items: center;
+    margin-left:4px;
+}
+#body-secondary img{
+    width: 45vw;
+}
+

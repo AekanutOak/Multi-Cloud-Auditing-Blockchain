@@ -3,13 +3,14 @@
 :: Activate the virtual environment
 call .venv\Scripts\activate
 
-python utils\add_domain.py
 
 :: Start your Flask applications in separate windows without waiting
+python "./init.py"
 start cmd /c "python ./CSP/CSP-1.py"
 start cmd /c "python ./CSP/CSP-2.py"
 start cmd /c "python ./CSP/CSP-3.py"
 start cmd /c "python ./Organizer.py"
+start cmd /c "python ./client.py"
 
 :: Actions while Flask applications are running (optional)
 
@@ -21,6 +22,3 @@ pause
 
 :: Deactivate the virtual environment when you're done
 call .venv\Scripts\deactivate
-
-:: Rest of your script after Flask applications have been started
-python utils\remove_domain.py

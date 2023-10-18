@@ -19,6 +19,11 @@
         "host":"127.0.0.5",
         "domain":"test-organizer.com"
     },
+    "Client":{
+        "port":80,
+        "host":"127.0.0.6",
+        "domain":"test-app-storage.com"
+    },
     "Blockchain":{
         "access_mode":"by_ip",
         "protocol":"http",

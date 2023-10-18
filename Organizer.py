@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return "Hello from organizer"
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -40,7 +40,7 @@ def upload():
             return "Failed to upload file to CSP-1", 500
     
 if __name__ == '__main__':
-    print("Starting on domain name "+config["Organizer"]["domain"])
+    print("Starting on ip "+config["Organizer"]["host"])
     print()
 
     app.run(debug=True,host=config["Organizer"]["host"],port=config["Organizer"]["port"])
