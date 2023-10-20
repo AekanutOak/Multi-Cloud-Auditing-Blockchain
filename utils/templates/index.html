@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+    <style>
+        tr,td,th{border: 1px solid black;}
+        td,th{
+            text-align: center;
+            padding: 5px;
+        }
+        input[type="text"]{
+            padding: 5px;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    {% if msg %}
+        <script>alert('{{msg}}');</script>
+    {% endif %}
+    <p><b>Account Ad
+        dress:</b> {{account_address}}</p>
+    <p>Balance: {{balance}} ETH</p>
+    <button onclick="window.location.href = '/'">Logout</button>
+    <h1>Upload a File</h1>
+    <form id="form-upload" action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file"><br>
+        <label>File Description:</label>
+        <input type="text" name="description"><br>
+        <input type="submit" value="Upload">
+    </form>
+
+    <h1>List of owned files</h1>
+    <table style="border: 1px solid black;border-collapse: collapse;">
+        <tr>
+            <th>filename</th>
+            <th>create</th>
+            <th>last modified</th>
+            <th>number of block</th>
+            <th>size</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for file in own_list %}
+        <tr>
+            <td>{{file.filename}}</td>
+            <td>{{file.create}}</td>
+            <td>{{file.updated}}</td>
+            <td>{{file.blocks}}</td>
+            <td>{{file.size}}</td>
+            <td>
+                <button type="button" id="download-{{file.filename}}">Download</button>
+                <script>
+                    document.getElementById("download-{{file.filename}}").addEventListener("click", function() {
+                        var payload = {
+                            "filename": '{{file.filename}}',
+                            "account_address": '{{account_address}}',
+                            "owner_address":'{{file.owner}}'
+                        };
+                    
+                        fetch("/download", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                                if (response.status === 200) {
+                                    // Handle a successful response
+                                    alert("Download request sent successfully!");
+                                } else {
+                                    // Handle an error response
+                                    alert("Download request failed.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                            });
+                        });
+                    </script>
+            </td>
+            <td>
+                <button type="button" id="assign-acl-{{file.filename}}">Share</button>
+                <style>
+                    /* CSS for the popup */
+                    .popup {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #fff;
+                        border: 1px solid #ccc;
+                        z-index: 1000;
+                        overflow: auto;
+                    }
+            
+                    /* CSS for the form */
+                    .popup form {
+                        text-align: center;
+                    }
+            
+                    /* CSS for the close button */
+                    .popup .close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                    }
+                </style>
+                <script>
+                    document.getElementById("assign-acl-{{file.filename}}").addEventListener("click", function () {
+                        // Create a popup div
+                        var popup = document.createElement("div");
+                        popup.className = "popup";
+                        var form = document.createElement("form");
+                        form.action = "/assign_ACL"; // Set the form action
+                        form.method = "POST";
+                        
+                        // Create text fields
+                        var textfield1 = document.createElement("input");
+                        textfield1.type = "text";
+                        textfield1.name = "user_address";
+                        textfield1.required = true;
+                        textfield1.placeholder = "user address";
+            
+                        var textfield2 = document.createElement("input");
+                        textfield2.type = "text";
+                        textfield2.name = "ACL";
+                        textfield2.required = true;
+                        textfield2.placeholder = "rw r- -w";
+
+                        var textfield3 = document.createElement("input");
+                        textfield3.type = "text";
+                        textfield3.name = "filename";
+                        textfield3.hidden = true;
+                        textfield3.value = "{{file.filename}}";
+
+                        var textfield4 = document.createElement("input");
+                        textfield4.type = "text";
+                        textfield4.name = "owner_address";
+                        textfield4.hidden = true;
+                        textfield4.value = "{{account_address}}";
+            
+                        // Create a submit button
+                        var submitButton = document.createElement("input");
+                        submitButton.type = "submit";
+                        submitButton.value = "Submit";
+            
+                        // Append form components to the form
+                        form.appendChild(textfield1);
+                        form.appendChild(document.createElement("br"));
+                        form.appendChild(textfield2);
+                        form.appendChild(document.createElement("br"));
+                        form.appendChild(textfield3);
+                        form.appendChild(textfield4);
+                        form.appendChild(submitButton);
+            
+                        // Create a close button for the popup
+                        var closeButton = document.createElement("button");
+                        closeButton.className = "close-button";
+                        closeButton.textContent = "Close";
+                        closeButton.addEventListener("click", function () {
+                            document.body.removeChild(popup);
+                        });
+            
+                        // Append the form and close button to the popup
+                        popup.appendChild(form);
+                        popup.appendChild(closeButton);
+            
+                        // Append the popup to the body
+                        document.body.appendChild(popup);
+                    });
+                </script>
+            </td>
+            <td>
+                <button type="button" id="log-{{file.filename}}">Log</button>
+                <style>
+                    /* CSS for the popup */
+                    .popup {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #fff;
+                        border: 1px solid #ccc;
+                        padding: 20px;
+                        z-index: 1000;
+                        overflow: auto;
+                    }
+                
+                    /* Style the table */
+                    .popup table {
+                        width: 100%;
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 10px; /* Adjust the margin as needed */
+                    }
+                
+                    .popup table th,
+                    .popup table td {
+                        border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                
+                    .popup table th {
+                        background-color: #f2f2f2;
+                    }
+                
+                    /* CSS for the close button */
+                    .popup .close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                    }
+                </style>
+                <script>
+                    document.getElementById("log-{{file.filename}}").addEventListener("click", function() {
+                        var payload = {
+                            "filename": '{{file.filename}}',
+                            "account_address": '{{account_address}}'
+                        };
+                
+                        fetch("/view_log", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                            if (response.status === 200) {
+                                // Handle a successful response
+                                response.json().then(data => {
+                                    // Create a popup div
+                                    var popup = document.createElement("div");
+                                    popup.className = "popup";
+                                    var table = document.createElement("table");
+                
+                                    // Create the table header
+                                    var headerRow = table.insertRow(0);
+                                    var th1 = document.createElement("th");
+                                    th1.innerHTML = "Timestamp";
+                                    var th2 = document.createElement("th");
+                                    th2.innerHTML = "Invorker";
+                                    var th3 = document.createElement("th");
+                                    th3.innerHTML = "Event";
+                                    headerRow.appendChild(th1);
+                                    headerRow.appendChild(th2);
+                                    headerRow.appendChild(th3);
+                
+                                    // Append the table to the popup
+                                    popup.appendChild(table);
+                
+                                    // Create a close button for the popup
+                                    var closeButton = document.createElement("button");
+                                    closeButton.className = "close-button";
+                                    closeButton.textContent = "Close";
+                                    closeButton.addEventListener("click", function() {
+                                        document.body.removeChild(popup);
+                                    });
+                
+                                    // Append the close button to the popup
+                                    popup.appendChild(closeButton);
+                
+                                    // Populate the table with data
+                                    for (var i = 0; i < data["output"].length; i++) {
+                                        var row = table.insertRow(i + 1);
+                                        var cell1 = row.insertCell(0);
+                                        var cell2 = row.insertCell(1);
+                                        var cell3 = row.insertCell(2);
+                                        cell1.innerHTML = data["output"][i][0];
+                                        cell2.innerHTML = data["output"][i][1];
+                                        cell3.innerHTML = data["output"][i][2];
+                                    }
+                
+                                    // Append the popup to the body
+                                    document.body.appendChild(popup);
+                                });
+                            } else {
+                                // Handle an error response
+                                alert("Download request failed.");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                        });
+                    });
+                </script>
+            </td>
+            <td>
+                <button type="button" id="ACL-{{file.filename}}">ACL</button>
+                <style>
+                    /* CSS for the popup */
+                    .popup {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #fff;
+                        border: 1px solid #ccc;
+                        padding: 20px;
+                        z-index: 1000;
+                        max-width: 100%;
+                        max-height: 100%;
+                        overflow: auto;
+                    }
+                
+                    /* Style the table */
+                    .popup table {
+                        width: 100%;
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 10px; /* Adjust the margin as needed */
+                    }
+                
+                    .popup table th,
+                    .popup table td {
+                        border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                
+                    .popup table th {
+                        background-color: #f2f2f2;
+                    }
+                
+                    /* CSS for the close button */
+                    .popup .close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                    }
+                </style>
+                <script>
+                    function handleRevocation(filename, address) {
+                        var payload = {
+                            "filename": filename,
+                            "user_address": address
+                        };
+
+                        fetch("/revoke", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                            if (response.status === 200) {
+                                // Handle a successful revocation response
+                                alert("Revocation request sent successfully!");
+                                // You may want to update the UI to reflect the revocation.
+                                window.location.href = "/index.html"
+                            } else {
+                                // Handle an error response
+                                alert("Revocation request failed.");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                        });
+                    }
+
+                    document.getElementById("ACL-{{file.filename}}").addEventListener("click", function() {
+                        var payload = {
+                            "filename": '{{file.filename}}',
+                            "account_address": '{{account_address}}'
+                        };
+                
+                        fetch("/view_ACL", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                            if (response.status === 200) {
+                                // Handle a successful response
+                                response.json().then(data => {
+                                    // Create a popup div
+                                    var popup = document.createElement("div");
+                                    popup.className = "popup";
+                                    var table = document.createElement("table");
+                
+                                    // Create the table header
+                                    var headerRow = table.insertRow(0);
+                                    var th1 = document.createElement("th");
+                                    th1.innerHTML = "User";
+                                    var th2 = document.createElement("th");
+                                    th2.innerHTML = "ACL";
+                                    var th3 = document.createElement("th");
+                                    th3.innerHTML = "";
+                                    headerRow.appendChild(th1);
+                                    headerRow.appendChild(th2);
+                
+                                    // Append the table to the popup
+                                    popup.appendChild(table);
+                
+                                    // Create a close button for the popup
+                                    var closeButton = document.createElement("button");
+                                    closeButton.className = "close-button";
+                                    closeButton.textContent = "Close";
+                                    closeButton.addEventListener("click", function() {
+                                        document.body.removeChild(popup);
+                                    });
+                
+                                    // Append the close button to the popup
+                                    popup.appendChild(closeButton);
+                
+                                    for (var key in data["output"]) {
+                                        // Use a closure to capture the current value of 'key'
+                                        (function (currentKey) {
+                                            var row = table.insertRow(-1); // -1 appends to the end
+                                            var cell1 = row.insertCell(0);
+                                            cell1.innerHTML = currentKey;
+                                            var cell2 = row.insertCell(1);
+                                            cell2.innerHTML = data["output"][currentKey];
+                                            var cell3 = row.insertCell(2);
+
+                                            // Create a button for revocation
+                                            if(currentKey != "{{account_address}}" && data["output"][currentKey] != "o-"){
+                                            var revokeButton = document.createElement("button");
+                                            revokeButton.textContent = "Revoke";
+
+                                            // Attach a click event handler to the button
+                                            revokeButton.addEventListener("click", function () {
+                                                // When the button is clicked, submit both filename and key for revocation
+                                                var filename = '{{file.filename}}'; // Use the specific filename
+                                                handleRevocation(filename, currentKey);
+                                            });
+
+                                            // Append the button to the cell
+                                            cell3.appendChild(revokeButton);}
+                                        })(key);
+                                    }
+                
+                                    // Append the popup to the body
+                                    document.body.appendChild(popup);
+                                });
+                            } else {
+                                // Handle an error response
+                                alert("Download request failed.");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                        });
+                    });
+                </script>
+            </td>
+            <td>
+                <button type="button" id="audit-{{file.filename}}">Audit</button>
+                <style>
+                    /* CSS for the popup */
+                    .popup_audit {
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #fff;
+                        border: 1px solid #ccc;
+                        padding: 5px;
+                        z-index: 1000;
+                        overflow: auto;
+                        width: 100px;
+                        height: 100px;
+                    }
+            
+                    /* CSS for the form */
+                    .popup_audit form {
+                        text-align: center;
+                    }
+            
+                    /* CSS for the close button */
+                    .popup_audit .close-button {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                    }
+                </style>
+                <script>
+                    document.getElementById("audit-{{file.filename}}").addEventListener("click", function () {
+                        // Create a popup div
+                        var popup_audit = document.createElement("div");
+                        popup_audit.className = "popup_audit";
+                        var form = document.createElement("form");
+                        form.action = "/audit"; // Set the form action
+                        form.method = "POST";
+                        
+                        // Create text fields
+                        var textfield1 = document.createElement("input");
+                        textfield1.type = "number";
+                        textfield1.min = 1;
+                        textfield1.max = 100;
+                        textfield1.name = "threshold";
+                        textfield1.required = true;
+                        textfield1.placeholder = "Threshold Audit";
+                        textfield1.style.padding = "5px";
+                        textfield1.style.margin = "5px";
+
+                        var textfield2 = document.createElement("input");
+                        textfield2.type = "text";
+                        textfield2.name = "filename";
+                        textfield2.hidden = true;
+                        textfield2.value = "{{file.filename}}";
+
+                        var textfield3 = document.createElement("input");
+                        textfield3.type = "text";
+                        textfield3.name = "owner_address";
+                        textfield3.hidden = true;
+                        textfield3.value = "{{account_address}}";
+
+                        var textfield4 = document.createElement("input");
+                        textfield4.type = "number";
+                        textfield4.name = "blocks";
+                        textfield4.hidden = true;
+                        textfield4.value = "{{file.blocks}}";
+            
+                        // Create a submit button
+                        var submitButton = document.createElement("input");
+                        submitButton.type = "submit";
+                        submitButton.value = "Submit";
+            
+                        // Append form components to the form
+                        form.appendChild(document.createElement("br"));
+                        form.appendChild(document.createElement("br"));
+                        form.appendChild(textfield1);
+                        form.appendChild(textfield2);
+                        form.appendChild(textfield3);
+                        form.appendChild(textfield4);
+                        form.appendChild(document.createElement("br"));
+                        form.appendChild(submitButton);
+            
+                        // Create a close button for the popup
+                        var closeButton = document.createElement("button");
+                        closeButton.className = "close-button";
+                        closeButton.textContent = "Close";
+                        closeButton.addEventListener("click", function () {
+                            document.body.removeChild(popup_audit);
+                        });
+            
+                        // Append the form and close button to the popup
+                        popup_audit.appendChild(form);
+                        popup_audit.appendChild(closeButton);
+            
+                        // Append the popup to the body
+                        document.body.appendChild(popup_audit);
+                    });
+                </script>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <hr>
+    {% if share_list|length > 0 %}
+    <h1>List of shared files</h1>
+    <table style="border: 1px solid black;border-collapse: collapse;">
+        <tr>
+            <th>filename</th>
+            <th>create</th>
+            <th>last modified</th>
+            <th>number of block</th>
+            <th>size</th>
+            <th>owner</th>
+            <th>ACL</th>
+            <th></th>
+        </tr>
+        {% for file in share_list %}
+        <tr>
+            <td>{{file.filename}}</td>
+            <td>{{file.create}}</td>
+            <td>{{file.updated}}</td>
+            <td>{{file.blocks}}</td>
+            <td>{{file.size}}</td>
+            <td>{{file.owner}}</td>
+            <td>{{file.ACL.account_address}}</td>
+            <td>
+                <button type="button" id="download-{{file.filename}}">Download</button>
+                <script>
+                    document.getElementById("download-{{file.filename}}").addEventListener("click", function() {
+                        var payload = {
+                            "filename": '{{file.filename}}',
+                            "account_address": '{{account_address}}',
+                            "owner_address":'{{file.owner}}'
+                        };
+                    
+                        fetch("/download", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => {
+                                if (response.status === 200) {
+                                    // Handle a successful response
+                                    alert("Download request sent successfully!");
+                                } else {
+                                    // Handle an error response
+                                    alert("Download request failed.");
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                            });
+                        });
+                    </script>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+
+</body>
+</html>

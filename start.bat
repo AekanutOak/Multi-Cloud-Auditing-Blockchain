@@ -9,8 +9,8 @@ python "./init.py"
 start cmd /c "python ./CSP/CSP-1.py"
 start cmd /c "python ./CSP/CSP-2.py"
 start cmd /c "python ./CSP/CSP-3.py"
-start cmd /c "python ./Organizer.py"
-start cmd /c "python ./client.py"
+start cmd /c "python ./utils/organizer.py"
+start cmd /c "python ./utils/client.py"
 
 :: Actions while Flask applications are running (optional)
 

@@ -1,0 +1,66 @@
+{
+    "7ae499bb7050d8e9e60130d6119c244f51a162f03556468dfa0a7e1f725e7564": {
+        "filename": "1-a.png",
+        "ID": "7ae499bb7050d8e9e60130d6119c244f51a162f03556468dfa0a7e1f725e7564",
+        "desc": "",
+        "owner": "0xc178482141C9f97c9747D7cDF8D9164Cb7D34DE2",
+        "size": 29480,
+        "ACL": {
+            "0xc178482141C9f97c9747D7cDF8D9164Cb7D34DE2": "rw",
+            "0xFEaA5a01faE4E52a5E8BC737Cba2D44e2Cd8D55f": "o-"
+        },
+        "blocks": {
+            "block0": "http://127.0.0.4:80",
+            "block1": "http://127.0.0.3:80",
+            "block2": "http://127.0.0.2:80",
+            "block3": "http://127.0.0.3:80",
+            "block4": "http://127.0.0.2:80"
+        }
+    },
+    "a511fcd0eba657b97ae431328cb9e2339c0deef9aff4bbe1a1fdc5187d22256f": {
+        "filename": "1-b.png",
+        "ID": "a511fcd0eba657b97ae431328cb9e2339c0deef9aff4bbe1a1fdc5187d22256f",
+        "desc": "",
+        "owner": "0xc178482141C9f97c9747D7cDF8D9164Cb7D34DE2",
+        "size": 36927,
+        "ACL": {
+            "0xc178482141C9f97c9747D7cDF8D9164Cb7D34DE2": "rw",
+            "0xFEaA5a01faE4E52a5E8BC737Cba2D44e2Cd8D55f": "o-"
+        },
+        "blocks": {
+            "block0": "http://127.0.0.3:80",
+            "block1": "http://127.0.0.3:80",
+            "block2": "http://127.0.0.2:80",
+            "block3": "http://127.0.0.3:80",
+            "block4": "http://127.0.0.3:80",
+            "block5": "http://127.0.0.4:80",
+            "block6": "http://127.0.0.2:80",
+            "block7": "http://127.0.0.4:80",
+            "block8": "http://127.0.0.4:80",
+            "block9": "http://127.0.0.2:80"
+        }
+    },
+    "c75bcd0e59e731927fbd0aee2e182dd3d509d910ada1381a14aa8a125de73016": {
+        "filename": "16.9b8b.png",
+        "ID": "c75bcd0e59e731927fbd0aee2e182dd3d509d910ada1381a14aa8a125de73016",
+        "desc": "",
+        "owner": "0x9b56D012e0fB083dADaC194d2a901503B33b10A9",
+        "size": 519490,
+        "ACL": {
+            "0x9b56D012e0fB083dADaC194d2a901503B33b10A9": "rw",
+            "0xFEaA5a01faE4E52a5E8BC737Cba2D44e2Cd8D55f": "o-"
+        },
+        "blocks": {
+            "block0": "http://127.0.0.4:80",
+            "block1": "http://127.0.0.3:80",
+            "block2": "http://127.0.0.3:80",
+            "block3": "http://127.0.0.2:80",
+            "block4": "http://127.0.0.4:80",
+            "block5": "http://127.0.0.2:80",
+            "block6": "http://127.0.0.3:80",
+            "block7": "http://127.0.0.4:80",
+            "block8": "http://127.0.0.4:80",
+            "block9": "http://127.0.0.2:80"
+        }
+    }
+}

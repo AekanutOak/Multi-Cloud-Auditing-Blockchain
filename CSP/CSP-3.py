@@ -5,9 +5,7 @@ from flask import Flask, request, send_from_directory
 current_path = os.path.dirname(__file__)
 storage_folder = os.path.join(current_path,"CSP-3")
 
-config_path = os.path.join(current_path,"../config.json")
-
-with open(config_path,"r") as f:
+with open(os.path.join(current_path,"../utils/config.json"),"r") as f:
     config = json.loads(f.read())["CSP-3"]
 
 # Check if folder is missing, then create a new one instead
@@ -26,25 +24,37 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
-        return "No file part"
-    
-    file = request.files['file']
+    data = request.get_json()["data"]
 
-    if file.filename == '':
-        return "No selected file"
-    
-    if file:
-        filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(filename)
+    with open(os.path.join(current_path,"./CSP-3/file_track.json"),"r") as f:
+        file_track = json.loads(f.read())
 
-        return "File uploaded successfully"
+    file_track.update(data)
+
+    with open(os.path.join(current_path,"./CSP-3/file_track.json"),"w") as f:
+        json.dump(file_track,f,indent=4)
     
+    return {"status":1,"output":"success"}
+    
+@app.route('/download',methods=["POST"])
+def download_file():
+    data = request.get_json()
+    file_ID = data["file_ID"]
+    block_list = data["block_list"]
+    temp_dict = {}
+
+    with open(os.path.join(current_path,"./CSP-3/file_track.json"),"r") as f:
+        file_track = json.loads(f.read())
+
+    for i in block_list:
+        temp_dict[f"block{i}"] = file_track[file_ID][f"block{i}"]
+
+    return {"status":1,"output":temp_dict}
+
 if __name__ == '__main__':
-
     print("Starting on ip "+config["host"])
     print()
-
+    
     app.run(
         debug = True,
         port = config['port'],

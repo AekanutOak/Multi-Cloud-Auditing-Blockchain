@@ -1,41 +1,13 @@
 from web3 import Web3
 import json, random, os
 import shutil
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric import padding
-
-# Function to generate RSA key pairs
-def generate_rsa_key_pair():
-    private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048,
-    )
-    return private_key
-
-# Function to save private key to a file
-def save_private_key(private_key, file_path):
-    with open(file_path, "wb") as f:
-        f.write(private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
-        ))
-
-# Function to save public key to a file
-def save_public_key(public_key, file_path):
-    with open(file_path, "wb") as f:
-        f.write(public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
-        ))
+from Crypto.PublicKey import RSA
 
 # The network address that the program will connect is stored in file
 # Please change to content of that file to change the network address
 current_path = os.path.dirname(__file__)
-config_path = os.path.join(current_path,"config.json")
 
-with open(config_path,"r") as f:
+with open(os.path.join("./utils/config.json"),"r") as f:
     config = json.loads(f.read())["Blockchain"]
 
     if(config["access_mode"] == "by_ip"):
@@ -47,10 +19,34 @@ with open(config_path,"r") as f:
 web3 = Web3(Web3.HTTPProvider(blockchain_address))
 addresses = web3.eth.accounts
 
-shutil.rmtree(os.path.join(current_path,"abi"), ignore_errors=True)  # Remove the directory if it exists
-os.mkdir(os.path.join(current_path,"abi"))  # Create the directory
+shutil.rmtree(os.path.join(current_path,"./abi"), ignore_errors=True)  # Remove the directory if it exists
+os.mkdir(os.path.join(current_path,"./abi"))  # Create the directory
 
-with open(os.path.join("./contract_list.json"),"w") as f:
+shutil.rmtree(os.path.join(current_path,"./utils/organizer_data"), ignore_errors=True)  # Remove the directory if it exists
+os.mkdir(os.path.join(current_path,"./utils/organizer_data"))  # Create the directory
+
+with open(os.path.join(current_path,"./utils/contract_list.json"),"w") as f:
+    json.dump({},f)
+
+with open(os.path.join(current_path,"./utils/organizer_data/file_track.json"),"w") as f:
+    json.dump({},f)
+
+shutil.rmtree(os.path.join(current_path,"./CSP/CSP-1"), ignore_errors=True)  # Remove the directory if it exists
+os.mkdir(os.path.join(current_path,"./CSP/CSP-1"))  # Create the directory
+
+shutil.rmtree(os.path.join(current_path,"./CSP/CSP-2"), ignore_errors=True)  # Remove the directory if it exists
+os.mkdir(os.path.join(current_path,"./CSP/CSP-2"))  # Create the directory
+
+shutil.rmtree(os.path.join(current_path,"./CSP/CSP-3"), ignore_errors=True)  # Remove the directory if it exists
+os.mkdir(os.path.join(current_path,"./CSP/CSP-3"))  # Create the directory
+
+with open(os.path.join(current_path,"./CSP/CSP-1/file_track.json"),"w") as f:
+    json.dump({},f)
+
+with open(os.path.join(current_path,"./CSP/CSP-2/file_track.json"),"w") as f:
+    json.dump({},f)
+
+with open(os.path.join(current_path,"./CSP/CSP-3/file_track.json"),"w") as f:
     json.dump({},f)
 
 user_list = {}
@@ -61,17 +57,40 @@ for i, address in enumerate(addresses):
     os.mkdir(os.path.join(current_path,directory_name))  # Create the directory
 
 
-    private_key = generate_rsa_key_pair()
-    public_key = private_key.public_key()
+    # Generate a new RSA key pair with a key size of 2048 bits
+    key = RSA.generate(2048)
+
+    # Extract the private and public keys
+    private_key = key.export_key()
+    public_key = key.publickey().export_key()
 
     # Save private and public keys to files
     private_key_file_path = os.path.join(directory_name, "private_key.pem")
     public_key_file_path = os.path.join(directory_name, "public_key.pem")
 
-    save_private_key(private_key, private_key_file_path)
-    save_public_key(public_key, public_key_file_path)
+    # Save the keys to files or use them as needed
+    with open(private_key_file_path, "wb") as private_key_file:
+        private_key_file.write(private_key)
+
+    with open(public_key_file_path, "wb") as public_key_file:
+        public_key_file.write(public_key)
+
 
     user_list[address] = f"user{i+1}"
 
-with open(os.path.join("./user_list.json"),"w") as f:
+with open(os.path.join(current_path,"./utils/user_list.json"),"w") as f:
     json.dump(user_list,f,indent=4)
+
+with open(os.path.join(current_path,"./utils/csp_list.json"),"w") as f:
+    json.dump({},f)
+
+addresses = addresses[len(addresses)-3:len(addresses)]
+
+csp_list = {}
+csp_list["organizer"] = addresses[len(addresses)-4]
+for i in range(len(addresses)):
+    csp_list[f"CSP-{i}"] = addresses[i]
+
+with open(os.path.join(current_path,"./utils/csp_list.json"),"w") as f:
+    json.dump(csp_list,f,indent=4)
+    
